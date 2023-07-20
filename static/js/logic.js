@@ -7,6 +7,17 @@ d3.json(queryUrl).then(function (data) {
   createFeatures(data.features);
 });
 
+  // Determining size of circles
+
+
+
+  
+
+  // Determining color of circles
+
+
+
+
 function createFeatures(earthquakeData) {
 
   // Define a function that we want to run once for each feature in the features array.
