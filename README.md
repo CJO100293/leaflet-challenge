@@ -31,3 +31,4 @@ This part is completely optional; you can complete this part as a way to challen
 - Add layer controls to your map.
 
 ## **Sources:**
+- the basis for the code used in lines 19-31 were worked out with the help of Steve Bennett as well as https://leafletjs.com/reference.html#circlemarker
