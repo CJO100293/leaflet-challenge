@@ -1,22 +1,10 @@
 // Store our API endpoint as queryUrl.
 let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
-// Perform a GET request to the query URL/
+// Perform a GET request to the query URL.
 d3.json(queryUrl).then(function (data) {
-  // Once we get a response, send the data.features object to the createFeatures function.
   createFeatures(data.features);
 });
-
-  // Determining size of circles
-
-
-
-  
-
-  // Determining color of circles
-
-
-
 
 function createFeatures(earthquakeData) {
 
@@ -29,11 +17,60 @@ function createFeatures(earthquakeData) {
   // Create a GeoJSON layer that contains the features array on the earthquakeData object.
   // Run the onEachFeature function once for each piece of data in the array.
   let earthquakes = L.geoJSON(earthquakeData, {
+    pointToLayer: function (feature, latlng) {
+      return L.circleMarker(latlng, {
+        radius: getCircleSize(feature.properties.mag),
+        fillColor: getCircleColor(feature.geometry.coordinates[2]),
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      });
+    },
     onEachFeature: onEachFeature
   });
 
-  // Send our earthquakes layer to the createMap function/
-  createMap(earthquakes);
+ // Send the earthquakes layer to the createMap function.
+ createMap(earthquakes);
+}
+
+  // determining size of circle 
+  function getCircleSize(magnitude) {
+      let size;
+      if (magnitude < 1) {
+        size = 3;
+      } else if (magnitude < 2.5) {
+        size = 6;
+      } else if (magnitude < 5) {
+        size = 15;
+      } else if (magnitude < 7) {
+        size = 25;
+      } else if (magnitude < 9) {
+        size = 30;
+      } else {
+        size = 40;
+      }
+      return size
+  }
+
+  // determining color of circle
+  function getCircleColor(depth) {
+    let color;
+    console.log(depth)
+    if (depth <= 10) {
+      color = "#7ad71f";
+    } else if (depth <= 30) {
+      color = "#c5f209";
+    } else if (depth <= 50) {
+      color = "#ffc412";
+    } else if (depth <= 70) {
+      color = "#ffc000";
+    } else if (depth <= 90) {
+      color = "#fa8072";
+    } else {
+      color = "#f00c0c";
+    }
+    return color
 }
 
 function createMap(earthquakes) {
@@ -74,4 +111,25 @@ function createMap(earthquakes) {
     collapsed: false
   }).addTo(myMap);
 
+  // Set up the legend.
+  let legend = L.control({ position: "bottomright" });
+  legend.onAdd = function() {
+    let div = L.DomUtil.create("div", "legend");
+    let labels = [];
+    let depths = [10, 30, 50, 70, 90]
+
+    //legend title
+  let title = '<div class="legend-title">Earthquake Depth</div>';
+  labels.push(title);
+
+    depths.forEach(function(depth, index) {
+      labels.push("<i style=\"background-color: " + getCircleColor(depths[index]) + "\"></i>"+depth+"<br>");
+    });
+
+    div.innerHTML += "" + labels.join("") + "";
+    return div;
+  };
+
+  // Adding the legend to the map
+  legend.addTo(myMap);
 }
