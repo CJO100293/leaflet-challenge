@@ -24,7 +24,7 @@ html {
   margin: 0;
   clear: both;
 }
-.legend li {
+.legend i {
   display: inline-block;
   width: 30px;
   height: 22px;
